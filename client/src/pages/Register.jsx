@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { authAPI } from '../services/api';
-import { Shield, Lock, Mail, User, Building2, ShieldAlert, AlertCircle, CheckCircle2, Eye, EyeOff, UserCheck } from 'lucide-react';
+import { Shield, Lock, Mail, User, Building2, ShieldAlert, AlertCircle, CheckCircle2, Eye, EyeOff, UserCheck, Plus, X } from 'lucide-react';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -19,6 +19,14 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // New Organization modal state
+  const [showOrgModal, setShowOrgModal] = useState(false);
+  const [orgName, setOrgName] = useState('');
+  const [orgCode, setOrgCode] = useState('');
+  const [orgLocation, setOrgLocation] = useState('');
+  const [isCreatingOrg, setIsCreatingOrg] = useState(false);
+  const [orgError, setOrgError] = useState('');
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -40,6 +48,43 @@ export default function Register() {
     }
     fetchBases();
   }, []);
+
+  const handleCreateOrg = async (e) => {
+    e.preventDefault();
+    setOrgError('');
+
+    if (!orgName.trim()) {
+      setOrgError('Organization name is required.');
+      return;
+    }
+
+    setIsCreatingOrg(true);
+
+    try {
+      const response = await authAPI.createBase({
+        name: orgName.trim(),
+        code: orgCode.trim(),
+        location: orgLocation.trim(),
+      });
+
+      if (response.data && response.data.base) {
+        const newOrg = response.data.base;
+        setBases((prev) => [...prev, newOrg]);
+        setBaseId(newOrg.id.toString());
+        setShowOrgModal(false);
+        setOrgName('');
+        setOrgCode('');
+        setOrgLocation('');
+      } else {
+        setOrgError('Failed to create organization.');
+      }
+    } catch (err) {
+      console.error('Error creating organization:', err);
+      setOrgError(err.response?.data?.message || 'Failed to create organization.');
+    } finally {
+      setIsCreatingOrg(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,7 +125,6 @@ export default function Register() {
       if (response.data && response.data.success) {
         setSuccessMessage('Account created successfully! Logging you into AEGIS MAMS...');
 
-        // Automatically authenticate user using returned token or login credentials
         if (response.data.token && response.data.user) {
           localStorage.setItem('aegis_token', response.data.token);
           localStorage.setItem('aegis_user', JSON.stringify(response.data.user));
@@ -88,7 +132,6 @@ export default function Register() {
             window.location.href = '/';
           }, 1200);
         } else {
-          // Fallback login
           const loginRes = await login(email, password);
           if (loginRes.success) {
             navigate('/');
@@ -149,8 +192,8 @@ export default function Register() {
                   <span className="metric-val">BCRYPT x10</span>
                 </div>
                 <div className="metric-box">
-                  <span className="metric-title">AUDIT LOGGING</span>
-                  <span className="metric-val">ENABLED</span>
+                  <span className="metric-title">ORGANIZATION</span>
+                  <span className="metric-val">MULTI-BASE</span>
                 </div>
               </div>
               <div className="graphic-footer-line">
@@ -162,14 +205,14 @@ export default function Register() {
 
         {/* Right Section - Account Registration Form */}
         <section className="login-card-section">
-          <div className="login-card" style={{ maxWidth: '480px' }}>
+          <div className="login-card" style={{ maxWidth: '500px' }}>
             <div className="login-card-header">
               <div className="card-brand-logo">
                 <UserCheck className="brand-shield" size={28} />
               </div>
               <h2 className="card-heading">AEGIS MAMS</h2>
               <h3 className="card-subheading">Create Account</h3>
-              <p className="card-subtitle">Set up your profile with your email ID</p>
+              <p className="card-subtitle">Set up your profile with your email ID & Organization</p>
             </div>
 
             {/* Error Message */}
@@ -269,11 +312,31 @@ export default function Register() {
                   </div>
                 </div>
 
-                {/* Base Select */}
+                {/* Base / Organization Select */}
                 <div className="form-group">
-                  <label htmlFor="baseId" className="form-label">
-                    Command Base
-                  </label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                    <label htmlFor="baseId" className="form-label" style={{ marginBottom: 0 }}>
+                      Organization / Base
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowOrgModal(true)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#38bdf8',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '2px',
+                        padding: 0,
+                      }}
+                    >
+                      <Plus size={12} /> New
+                    </button>
+                  </div>
                   <div className="input-wrapper">
                     <Building2 className="input-icon" size={18} />
                     <select
@@ -381,6 +444,145 @@ export default function Register() {
           </div>
         </section>
       </div>
+
+      {/* Create Organization Modal */}
+      {showOrgModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(11, 15, 25, 0.85)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+        >
+          <div
+            style={{
+              background: '#0f172a',
+              border: '1px solid #334155',
+              borderRadius: '12px',
+              padding: '1.75rem',
+              width: '100%',
+              maxWidth: '420px',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Building2 size={20} style={{ color: '#38bdf8' }} />
+                <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.1rem', fontWeight: 700 }}>
+                  Create Organization / Base
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowOrgModal(false)}
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {orgError && (
+              <div
+                style={{
+                  background: '#451a03',
+                  color: '#fde047',
+                  border: '1px solid #b45309',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '6px',
+                  marginBottom: '1rem',
+                  fontSize: '0.825rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <AlertCircle size={16} />
+                <span>{orgError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleCreateOrg}>
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label className="form-label">Organization Name</label>
+                <input
+                  type="text"
+                  required
+                  value={orgName}
+                  onChange={(e) => setOrgName(e.target.value)}
+                  placeholder="e.g. Strategic Defense Command"
+                  className="form-input"
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <div className="form-group">
+                  <label className="form-label">Org Code (optional)</label>
+                  <input
+                    type="text"
+                    value={orgCode}
+                    onChange={(e) => setOrgCode(e.target.value)}
+                    placeholder="e.g. SDC-01"
+                    className="form-input"
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Location (optional)</label>
+                  <input
+                    type="text"
+                    value={orgLocation}
+                    onChange={(e) => setOrgLocation(e.target.value)}
+                    placeholder="e.g. Sector 7 Command"
+                    className="form-input"
+                    style={{ width: '100%' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowOrgModal(false)}
+                  className="btn"
+                  style={{
+                    background: '#334155',
+                    color: '#f8fafc',
+                    padding: '0.6rem 1.25rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreatingOrg}
+                  style={{
+                    background: '#0284c7',
+                    color: '#ffffff',
+                    padding: '0.6rem 1.25rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {isCreatingOrg ? 'Creating...' : 'Save Organization'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

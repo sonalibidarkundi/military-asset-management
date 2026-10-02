@@ -116,6 +116,54 @@ export const getBases = async (req, res, next) => {
   }
 };
 
+// @desc    Create a new organization / base
+// @route   POST /api/auth/bases
+// @access  Public
+export const createBase = async (req, res, next) => {
+  try {
+    const { name, code, location } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Organization / Base name is required.',
+      });
+    }
+
+    const trimmedName = name.trim();
+    const generatedCode = code && code.trim() ? code.trim().toUpperCase() : (trimmedName.substring(0, 3).toUpperCase() + '-01');
+    const trimmedLocation = location && location.trim() ? location.trim() : 'Command HQ';
+
+    // Insert into bases table
+    const result = await query(
+      `INSERT INTO bases (name, code, location, created_at)
+       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+       RETURNING id, name, code, location`,
+      [trimmedName, generatedCode, trimmedLocation]
+    );
+
+    const newBase = result.rows[0];
+
+    // Audit log
+    await logAudit({
+      userId: req.user?.id || 1,
+      action: 'CREATE_ORGANIZATION',
+      entityType: 'BASE',
+      entityId: newBase.id,
+      details: { name: newBase.name, code: newBase.code, location: newBase.location },
+      ipAddress: req.ip || req.connection?.remoteAddress,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Organization created successfully.',
+      base: newBase,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
