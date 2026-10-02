@@ -29,14 +29,16 @@ app.use(
 );
 
 // CORS Configuration
-const allowedOrigin = process.env.CLIENT_URL || process.env.FRONTEND_URL || '*';
-
 app.use(
   cors({
     origin: true,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
+app.options('*', cors());
 
 app.use(express.json());
 app.use(morgan('dev'));
