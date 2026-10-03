@@ -50,7 +50,7 @@ export const getReportSummary = async (req, res, next) => {
     const equipmentTypesList = eqRes.rows;
 
     // 3. Fetch Current Physical Asset Stock per base & equipment type
-    let stockSql = `SELECT base_id, equipment_type_id, COALESCE(SUM(quantity), 0)::INTEGER AS total FROM assets WHERE status = 'AVAILABLE'`;
+    let stockSql = `SELECT base_id, equipment_type_id, COALESCE(SUM(quantity), 0)::INTEGER AS total FROM assets WHERE status IN ('AVAILABLE', 'OPERATIONAL')`;
     const stockParams = [];
     if (effectiveBaseId) {
       stockParams.push(effectiveBaseId);

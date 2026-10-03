@@ -71,9 +71,160 @@ const fallbackState = {
   transfers: [
     { id: 1, transfer_date: '2026-03-20', from_base_id: 1, from_base_name: 'Command HQ', from_base_code: 'HQ-01', to_base_id: 2, to_base_name: 'Naval Base 02', to_base_code: 'NB-02', equipment_type_id: 3, equipment_name: 'SATCOM Transceiver Terminal', category: 'Communications', quantity: 5, status: 'COMPLETED', reference_number: 'TR-2026-501', notes: 'Relocation for naval exercise' },
   ],
-  assignments: [],
-  expenditures: [],
-  audit_logs: [],
+  assignments: [
+    {
+      id: 1,
+      asset_id: 1,
+      serial_number: 'ARM-9021',
+      equipment_type_id: 1,
+      equipment_name: 'M1A2 Abrams Tank',
+      category: 'Heavy Armor',
+      unit: 'Units',
+      personnel_name: 'Capt. Jonathan Vance',
+      base_id: 1,
+      base_name: 'Command HQ',
+      base_code: 'HQ-01',
+      quantity: 2,
+      assignment_date: '2026-03-10',
+      purpose: 'Tactical Reconnaissance Drill',
+      status: 'ACTIVE',
+      created_by: 1,
+      created_by_name: 'Admin',
+      created_at: '2026-03-10T10:00:00.000Z',
+    },
+    {
+      id: 2,
+      asset_id: 2,
+      serial_number: 'VEH-4410',
+      equipment_type_id: 2,
+      equipment_name: 'HMMWV Tactical Support',
+      category: 'Light Vehicle',
+      unit: 'Units',
+      personnel_name: 'Lt. Sarah Connor',
+      base_id: 1,
+      base_name: 'Command HQ',
+      base_code: 'HQ-01',
+      quantity: 4,
+      assignment_date: '2026-03-12',
+      purpose: 'Perimeter Security Patrol',
+      status: 'ACTIVE',
+      created_by: 1,
+      created_by_name: 'Admin',
+      created_at: '2026-03-12T14:30:00.000Z',
+    },
+    {
+      id: 3,
+      asset_id: 3,
+      serial_number: 'COM-8812',
+      equipment_type_id: 3,
+      equipment_name: 'SATCOM Transceiver Terminal',
+      category: 'Communications',
+      unit: 'Sets',
+      personnel_name: 'Sgt. Marcus Wright',
+      base_id: 2,
+      base_name: 'Naval Base 02',
+      base_code: 'NB-02',
+      quantity: 3,
+      assignment_date: '2026-03-18',
+      purpose: 'Coastal Defense Comms Relay',
+      status: 'ACTIVE',
+      created_by: 2,
+      created_by_name: 'Base Commander',
+      created_at: '2026-03-18T09:15:00.000Z',
+    },
+  ],
+  expenditures: [
+    {
+      id: 1,
+      asset_id: 4,
+      serial_number: 'ARM-5542',
+      equipment_type_id: 4,
+      equipment_name: '5.56mm Tactical Rifle',
+      category: 'Small Arms',
+      unit: 'Crates',
+      base_id: 1,
+      base_name: 'Command HQ',
+      base_code: 'HQ-01',
+      quantity: 10,
+      expenditure_date: '2026-03-15',
+      reason: 'Live-fire marksmanship training exercise',
+      created_by: 1,
+      created_by_name: 'Admin',
+      created_at: '2026-03-15T16:00:00.000Z',
+    },
+    {
+      id: 2,
+      asset_id: 3,
+      serial_number: 'COM-8812',
+      equipment_type_id: 3,
+      equipment_name: 'SATCOM Transceiver Terminal',
+      category: 'Communications',
+      unit: 'Sets',
+      base_id: 2,
+      base_name: 'Naval Base 02',
+      base_code: 'NB-02',
+      quantity: 1,
+      expenditure_date: '2026-03-22',
+      reason: 'Saltwater corrosion component retirement',
+      created_by: 2,
+      created_by_name: 'Base Commander',
+      created_at: '2026-03-22T11:45:00.000Z',
+    },
+  ],
+  audit_logs: [
+    {
+      id: 1,
+      user_id: 1,
+      user_name: 'Admin',
+      user_email: 'admin@aegis.local',
+      user_role: 'admin',
+      action: 'LOGIN',
+      entity_type: 'AUTH',
+      entity_id: 1,
+      details: { email: 'admin@aegis.local', role: 'admin' },
+      ip_address: '127.0.0.1',
+      created_at: '2026-03-10T08:00:00.000Z',
+    },
+    {
+      id: 2,
+      user_id: 1,
+      user_name: 'Admin',
+      user_email: 'admin@aegis.local',
+      user_role: 'admin',
+      action: 'CREATE_ASSIGNMENT',
+      entity_type: 'ASSIGNMENT',
+      entity_id: 1,
+      details: { asset_id: 1, personnel_name: 'Capt. Jonathan Vance', quantity: 2, purpose: 'Tactical Reconnaissance Drill' },
+      ip_address: '127.0.0.1',
+      created_at: '2026-03-10T10:00:00.000Z',
+    },
+    {
+      id: 3,
+      user_id: 1,
+      user_name: 'Admin',
+      user_email: 'admin@aegis.local',
+      user_role: 'admin',
+      action: 'CREATE_EXPENDITURE',
+      entity_type: 'EXPENDITURE',
+      entity_id: 1,
+      details: { asset_id: 4, quantity: 10, reason: 'Live-fire marksmanship training exercise' },
+      ip_address: '127.0.0.1',
+      created_at: '2026-03-15T16:00:00.000Z',
+    },
+    {
+      id: 4,
+      user_id: 1,
+      user_name: 'Admin',
+      user_email: 'admin@aegis.local',
+      user_role: 'admin',
+      action: 'CREATE_PURCHASE',
+      entity_type: 'PURCHASE',
+      entity_id: 1,
+      details: { equipment_type_id: 1, quantity: 4, supplier: 'General Dynamics' },
+      ip_address: '127.0.0.1',
+      created_at: '2026-03-15T09:30:00.000Z',
+    },
+  ],
 };
 
 // Resilient query resolver
@@ -95,63 +246,88 @@ function handleFallbackQuery(text, params = []) {
     else if (queryStr.includes('from bases')) targetList = fallbackState.bases;
     else if (queryStr.includes('from users')) targetList = fallbackState.users;
 
+    // Filter by base_id if parameter provided
+    if (queryStr.includes('base_id = $') || queryStr.includes('to_base_id = $') || queryStr.includes('from_base_id = $')) {
+      const baseParam = params.find(p => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (baseParam !== undefined) {
+        const bId = parseInt(baseParam, 10);
+        targetList = targetList.filter(item => item.base_id === bId || item.to_base_id === bId || item.from_base_id === bId);
+      }
+    }
+
+    // Filter by equipment_type_id if parameter provided
+    if (queryStr.includes('equipment_type_id = $')) {
+      const eqParam = params.find(p => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (eqParam !== undefined) {
+        const eqId = parseInt(eqParam, 10);
+        targetList = targetList.filter(item => item.equipment_type_id === eqId);
+      }
+    }
+
+    // Filter by status if specified in query string
+    if (queryStr.includes("status = 'active'") || queryStr.includes("status in ('completed', 'in_transit')") || queryStr.includes("status in ('available', 'operational')")) {
+      if (queryStr.includes("status = 'active'")) {
+        targetList = targetList.filter(item => String(item.status).toUpperCase() === 'ACTIVE');
+      } else if (queryStr.includes("status in ('available', 'operational')")) {
+        targetList = targetList.filter(item => ['AVAILABLE', 'OPERATIONAL'].includes(String(item.status).toUpperCase()));
+      }
+    }
+
+    if (queryStr.includes('group by')) {
+      const map = {};
+      targetList.forEach(item => {
+        const bId = queryStr.includes('to_base_id') ? (item.to_base_id || item.base_id) : (queryStr.includes('from_base_id') ? (item.from_base_id || item.base_id) : item.base_id);
+        const eqId = item.equipment_type_id || 1;
+        const key = `${bId}_${eqId}`;
+        if (!map[key]) {
+          map[key] = { base_id: bId, equipment_type_id: eqId, total: 0 };
+        }
+        map[key].total += (parseInt(item.quantity, 10) || 1);
+      });
+      return { rows: Object.values(map) };
+    }
+
     const totalSum = targetList.reduce((acc, curr) => acc + (parseInt(curr.quantity, 10) || 1), 0);
     return { rows: [{ total: totalSum, count: targetList.length, sum: totalSum }] };
   }
 
-  // 1. Users lookup by email
-  if (queryStr.includes('from users') && (queryStr.includes('lower(u.email)') || queryStr.includes('lower(email)'))) {
-    const targetEmail = (params[0] || '').toString().toLowerCase();
-    const user = fallbackState.users.find((u) => u.email.toLowerCase() === targetEmail);
-    return { rows: user ? [user] : [] };
-  }
-
-  // 2. Users lookup by ID
-  if (queryStr.includes('from users') && (queryStr.includes('u.id = $1') || queryStr.includes('id = $1'))) {
-    const targetId = parseInt(params[0], 10);
-    const user = fallbackState.users.find((u) => u.id === targetId);
-    return { rows: user ? [user] : [] };
-  }
-
-  // 3. Register user insert
-  if (queryStr.includes('insert into users')) {
-    const [name, email, password_hash, role, base_id] = params;
-    const baseObj = fallbackState.bases.find((b) => b.id === parseInt(base_id, 10)) || fallbackState.bases[0];
-    const newUser = {
-      id: fallbackState.users.length + 1,
-      name,
-      email: email.toLowerCase(),
-      password_hash,
-      role: role || 'admin',
-      base_id: baseObj.id,
-      base_name: baseObj.name,
-      created_at: new Date().toISOString(),
-    };
-    fallbackState.users.push(newUser);
-    return { rows: [newUser] };
-  }
-
-  // 4. Equipment Types list / lookup
-  if (queryStr.includes('equipment_types')) {
-    return { rows: fallbackState.equipment_types };
-  }
-
-  // 5. Bases list / lookup
-  if (queryStr.includes('from bases') || queryStr.includes('bases')) {
-    if (queryStr.includes('where id = $1')) {
-      const bId = parseInt(params[0], 10);
-      const b = fallbackState.bases.find((base) => base.id === bId);
-      return { rows: b ? [b] : [] };
+  // 1. Users lookup & operations
+  if (queryStr.includes('from users') || queryStr.includes('insert into users')) {
+    if (queryStr.includes('lower(u.email)') || queryStr.includes('lower(email)')) {
+      const targetEmail = (params[0] || '').toString().toLowerCase();
+      const user = fallbackState.users.find((u) => u.email.toLowerCase() === targetEmail);
+      return { rows: user ? [user] : [] };
     }
-    return { rows: fallbackState.bases };
+    if (queryStr.includes('u.id = $1') || queryStr.includes('id = $1')) {
+      const targetId = parseInt(params[0], 10);
+      const user = fallbackState.users.find((u) => u.id === targetId);
+      return { rows: user ? [user] : [] };
+    }
+    if (queryStr.includes('insert into users')) {
+      const [name, email, password_hash, role, base_id] = params;
+      const baseObj = fallbackState.bases.find((b) => b.id === parseInt(base_id, 10)) || fallbackState.bases[0];
+      const newUser = {
+        id: fallbackState.users.length + 1,
+        name,
+        email: email.toLowerCase(),
+        password_hash,
+        role: role || 'admin',
+        base_id: baseObj.id,
+        base_name: baseObj.name,
+        created_at: new Date().toISOString(),
+      };
+      fallbackState.users.push(newUser);
+      return { rows: [newUser] };
+    }
+    return { rows: fallbackState.users };
   }
 
-  // 6. Assets operations: Delete / Update / Select / Insert
-  if (queryStr.includes('from assets') || queryStr.includes('assets')) {
+  // 2. Assets operations (Primary table: assets)
+  if (queryStr.includes('from assets') || queryStr.includes('into assets') || queryStr.includes('update assets') || queryStr.includes('delete from assets')) {
     // Delete Asset
-    if (queryStr.includes('delete from assets')) {
+    if (queryStr.startsWith('delete')) {
       const targetId = parseInt(params[0], 10);
-      const index = fallbackState.assets.findIndex((a) => a.id === targetId);
+      const index = fallbackState.assets.findIndex((a) => String(a.id) === String(params[0]) || a.id === targetId);
       if (index !== -1) {
         fallbackState.assets.splice(index, 1);
       }
@@ -159,7 +335,7 @@ function handleFallbackQuery(text, params = []) {
     }
 
     // Insert Asset
-    if (queryStr.includes('insert into assets')) {
+    if (queryStr.startsWith('insert')) {
       const [equipment_type_id, base_id, serial_number, quantity, status] = params;
       const eq = fallbackState.equipment_types.find((e) => e.id === parseInt(equipment_type_id, 10)) || fallbackState.equipment_types[0];
       const b = fallbackState.bases.find((base) => base.id === parseInt(base_id, 10)) || fallbackState.bases[0];
@@ -182,9 +358,9 @@ function handleFallbackQuery(text, params = []) {
     }
 
     // Update Asset
-    if (queryStr.includes('update assets')) {
+    if (queryStr.startsWith('update')) {
       const targetId = parseInt(params[params.length - 1], 10);
-      const asset = fallbackState.assets.find((a) => a.id === targetId);
+      const asset = fallbackState.assets.find((a) => String(a.id) === String(params[params.length - 1]) || a.id === targetId);
       if (asset) {
         if (params[0]) asset.equipment_type_id = parseInt(params[0], 10);
         if (params[1]) asset.base_id = parseInt(params[1], 10);
@@ -196,29 +372,69 @@ function handleFallbackQuery(text, params = []) {
     }
 
     // Select single asset by ID
-    if (queryStr.includes('where a.id = $1') || queryStr.includes('where id = $1')) {
+    if (queryStr.startsWith('select') && (queryStr.includes('where a.id =') || queryStr.includes('where id ='))) {
       const targetId = parseInt(params[0], 10);
-      let asset = fallbackState.assets.find((a) => String(a.id) === String(params[0]) || a.id === targetId);
-      if (!asset) {
-        asset = {
-          id: targetId || 1,
-          serial_number: `SN-${targetId || 101}`,
-          equipment_type_id: 1,
-          equipment_name: 'M1A2 Abrams Tank',
-          category: 'Heavy Armor',
-          unit: 'Units',
-          base_id: 1,
-          base_name: 'Command HQ',
-          base_code: 'HQ-01',
-          quantity: 1,
-          status: 'AVAILABLE',
-          created_at: new Date().toISOString(),
-        };
-      }
-      return { rows: [asset] };
+      const asset = fallbackState.assets.find((a) => String(a.id) === String(params[0]) || a.id === targetId);
+      return { rows: asset ? [asset] : [] };
     }
 
-    return { rows: fallbackState.assets };
+    let filteredAssets = [...fallbackState.assets];
+
+    // Filter by base_id
+    if (queryStr.includes('a.base_id = $') || queryStr.includes('where base_id = $')) {
+      const baseParam = params.find((p) => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (baseParam !== undefined) {
+        const bId = parseInt(baseParam, 10);
+        filteredAssets = filteredAssets.filter((a) => a.base_id === bId);
+      }
+    }
+
+    // Filter by equipment_type_id
+    if (queryStr.includes('a.equipment_type_id = $') || queryStr.includes('where equipment_type_id = $')) {
+      const eqParam = params.find((p) => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (eqParam !== undefined) {
+        const eqId = parseInt(eqParam, 10);
+        filteredAssets = filteredAssets.filter((a) => a.equipment_type_id === eqId);
+      }
+    }
+
+    // Filter by status
+    if (queryStr.includes('a.status = $') || queryStr.includes('where status = $')) {
+      const statusParam = params.find((p) => typeof p === 'string' && ['AVAILABLE', 'ASSIGNED', 'IN_TRANSIT', 'EXPENDED'].includes(p.toUpperCase()));
+      if (statusParam) {
+        filteredAssets = filteredAssets.filter((a) => a.status.toUpperCase() === statusParam.toUpperCase());
+      }
+    }
+
+    // Filter by search
+    const searchParam = params.find((p) => typeof p === 'string' && p.startsWith('%') && p.endsWith('%'));
+    if (searchParam) {
+      const term = searchParam.replace(/%/g, '').toLowerCase();
+      filteredAssets = filteredAssets.filter((a) =>
+        String(a.id).includes(term) ||
+        (a.serial_number && a.serial_number.toLowerCase().includes(term)) ||
+        (a.equipment_name && a.equipment_name.toLowerCase().includes(term)) ||
+        (a.base_name && a.base_name.toLowerCase().includes(term))
+      );
+    }
+
+    filteredAssets.sort((a, b) => b.id - a.id);
+    return { rows: filteredAssets };
+  }
+
+  // 3. Equipment Types list / lookup (Primary table: equipment_types)
+  if (queryStr.includes('from equipment_types')) {
+    return { rows: fallbackState.equipment_types };
+  }
+
+  // 4. Bases list / lookup (Primary table: bases)
+  if (queryStr.includes('from bases')) {
+    if (queryStr.includes('where id = $1')) {
+      const bId = parseInt(params[0], 10);
+      const b = fallbackState.bases.find((base) => base.id === bId);
+      return { rows: b ? [b] : [] };
+    }
+    return { rows: fallbackState.bases };
   }
 
   // 7. Purchases list / insert
@@ -276,19 +492,197 @@ function handleFallbackQuery(text, params = []) {
     return { rows: fallbackState.transfers };
   }
 
-  // 9. Assignments
+  // 9. Assignments operations
   if (queryStr.includes('assignments')) {
-    return { rows: fallbackState.assignments };
+    if (queryStr.includes('insert into assignments')) {
+      const [asset_id, personnel_name, base_id, quantity, assignment_date, purpose, status, created_by] = params;
+      const asset = fallbackState.assets.find((a) => a.id === parseInt(asset_id, 10)) || fallbackState.assets[0];
+      const b = fallbackState.bases.find((base) => base.id === parseInt(base_id, 10)) || fallbackState.bases[0];
+      const creator = fallbackState.users.find((u) => u.id === parseInt(created_by, 10)) || fallbackState.users[0];
+
+      const newAssignment = {
+        id: fallbackState.assignments.length > 0 ? Math.max(...fallbackState.assignments.map((a) => a.id)) + 1 : 1,
+        asset_id: asset.id,
+        serial_number: asset.serial_number,
+        equipment_type_id: asset.equipment_type_id,
+        equipment_name: asset.equipment_name,
+        category: asset.category,
+        unit: asset.unit,
+        personnel_name,
+        base_id: b.id,
+        base_name: b.name,
+        base_code: b.code,
+        quantity: parseInt(quantity, 10) || 1,
+        assignment_date: assignment_date || new Date().toISOString().split('T')[0],
+        purpose,
+        status: status || 'ACTIVE',
+        created_by: creator.id,
+        created_by_name: creator.name,
+        created_at: new Date().toISOString(),
+      };
+
+      if (asset && newAssignment.status === 'ACTIVE') {
+        asset.quantity = Math.max(0, asset.quantity - newAssignment.quantity);
+      }
+
+      fallbackState.assignments.push(newAssignment);
+      return { rows: [newAssignment] };
+    }
+
+    if (queryStr.includes('update assignments')) {
+      const targetId = parseInt(params[params.length - 1], 10);
+      const asn = fallbackState.assignments.find((a) => a.id === targetId);
+      if (asn) {
+        asn.status = 'RETURNED';
+        const asset = fallbackState.assets.find((a) => a.id === asn.asset_id);
+        if (asset) {
+          asset.quantity += asn.quantity;
+        }
+      }
+      return { rows: asn ? [asn] : [] };
+    }
+
+    let list = [...fallbackState.assignments];
+
+    if (queryStr.includes('asn.id = $1') || queryStr.includes('where id = $1')) {
+      const targetId = parseInt(params[0], 10);
+      const found = list.find((a) => a.id === targetId);
+      return { rows: found ? [found] : [] };
+    }
+
+    if (queryStr.includes('asn.base_id = $') || queryStr.includes('base_id = $')) {
+      const baseParam = params.find((p) => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (baseParam !== undefined) {
+        list = list.filter((a) => a.base_id === parseInt(baseParam, 10));
+      }
+    }
+
+    if (queryStr.includes('et.id = $') || queryStr.includes('equipment_type_id = $')) {
+      const eqParam = params.find((p) => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (eqParam !== undefined) {
+        list = list.filter((a) => a.equipment_type_id === parseInt(eqParam, 10));
+      }
+    }
+
+    if (queryStr.includes('asn.status = $')) {
+      const statusParam = params.find((p) => typeof p === 'string' && ['ACTIVE', 'RETURNED', 'CANCELLED'].includes(p.toUpperCase()));
+      if (statusParam) {
+        list = list.filter((a) => a.status.toUpperCase() === statusParam.toUpperCase());
+      }
+    }
+
+    list.sort((a, b) => b.id - a.id);
+    return { rows: list };
   }
 
-  // 10. Expenditures
+  // 10. Expenditures operations
   if (queryStr.includes('expenditures')) {
-    return { rows: fallbackState.expenditures };
+    if (queryStr.includes('insert into expenditures')) {
+      const [asset_id, base_id, quantity, expenditure_date, reason, created_by] = params;
+      const asset = fallbackState.assets.find((a) => a.id === parseInt(asset_id, 10)) || fallbackState.assets[0];
+      const b = fallbackState.bases.find((base) => base.id === parseInt(base_id, 10)) || fallbackState.bases[0];
+      const creator = fallbackState.users.find((u) => u.id === parseInt(created_by, 10)) || fallbackState.users[0];
+
+      const newExpenditure = {
+        id: fallbackState.expenditures.length > 0 ? Math.max(...fallbackState.expenditures.map((e) => e.id)) + 1 : 1,
+        asset_id: asset.id,
+        serial_number: asset.serial_number,
+        equipment_type_id: asset.equipment_type_id,
+        equipment_name: asset.equipment_name,
+        category: asset.category,
+        unit: asset.unit,
+        base_id: b.id,
+        base_name: b.name,
+        base_code: b.code,
+        quantity: parseInt(quantity, 10) || 1,
+        expenditure_date: expenditure_date || new Date().toISOString().split('T')[0],
+        reason,
+        created_by: creator.id,
+        created_by_name: creator.name,
+        created_at: new Date().toISOString(),
+      };
+
+      if (asset) {
+        asset.quantity = Math.max(0, asset.quantity - newExpenditure.quantity);
+      }
+
+      fallbackState.expenditures.push(newExpenditure);
+      return { rows: [newExpenditure] };
+    }
+
+    let list = [...fallbackState.expenditures];
+
+    if (queryStr.includes('exp.id = $1') || queryStr.includes('where id = $1')) {
+      const targetId = parseInt(params[0], 10);
+      const found = list.find((e) => e.id === targetId);
+      return { rows: found ? [found] : [] };
+    }
+
+    if (queryStr.includes('exp.base_id = $') || queryStr.includes('base_id = $')) {
+      const baseParam = params.find((p) => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (baseParam !== undefined) {
+        list = list.filter((e) => e.base_id === parseInt(baseParam, 10));
+      }
+    }
+
+    if (queryStr.includes('et.id = $') || queryStr.includes('equipment_type_id = $')) {
+      const eqParam = params.find((p) => typeof p === 'number' || (typeof p === 'string' && !isNaN(parseInt(p, 10)) && !p.includes('%')));
+      if (eqParam !== undefined) {
+        list = list.filter((e) => e.equipment_type_id === parseInt(eqParam, 10));
+      }
+    }
+
+    list.sort((a, b) => b.id - a.id);
+    return { rows: list };
   }
 
-  // 11. Audit Logs
+  // 11. Audit Logs operations
   if (queryStr.includes('audit')) {
-    return { rows: fallbackState.audit_logs };
+    if (queryStr.includes('insert into audit_logs')) {
+      const [user_id, action, entity_type, entity_id, details, ip_address] = params;
+      const creator = fallbackState.users.find((u) => u.id === parseInt(user_id, 10)) || fallbackState.users[0];
+
+      let parsedDetails = details;
+      if (typeof details === 'string') {
+        try { parsedDetails = JSON.parse(details); } catch {}
+      }
+
+      const newAudit = {
+        id: fallbackState.audit_logs.length > 0 ? Math.max(...fallbackState.audit_logs.map((a) => a.id)) + 1 : 1,
+        user_id: creator ? creator.id : user_id,
+        user_name: creator ? creator.name : 'System',
+        user_email: creator ? creator.email : 'system@aegis.local',
+        user_role: creator ? creator.role : 'admin',
+        action,
+        entity_type,
+        entity_id: entity_id !== null && entity_id !== undefined ? parseInt(entity_id, 10) : null,
+        details: parsedDetails,
+        ip_address: ip_address || '127.0.0.1',
+        created_at: new Date().toISOString(),
+      };
+
+      fallbackState.audit_logs.push(newAudit);
+      return { rows: [{ id: newAudit.id }] };
+    }
+
+    let list = [...fallbackState.audit_logs];
+
+    if (queryStr.includes('al.action ilike')) {
+      const actParam = params.find((p) => typeof p === 'string' && !p.includes('%'));
+      if (actParam) {
+        list = list.filter((a) => String(a.action).toLowerCase() === actParam.toLowerCase());
+      }
+    }
+
+    if (queryStr.includes('al.entity_type ilike')) {
+      const entParam = params.find((p) => typeof p === 'string' && !p.includes('%'));
+      if (entParam) {
+        list = list.filter((a) => String(a.entity_type).toLowerCase() === entParam.toLowerCase());
+      }
+    }
+
+    list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at) || b.id - a.id);
+    return { rows: list };
   }
 
   // Default empty rows

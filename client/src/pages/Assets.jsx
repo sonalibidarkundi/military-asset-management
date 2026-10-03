@@ -133,18 +133,27 @@ export default function Assets() {
 
   // Submit Form (Add or Edit)
   const handleFormSubmit = async (formData) => {
-    if (editingAsset) {
-      const response = await assetsAPI.update(editingAsset.id, formData);
-      if (response.data && response.data.success) {
-        showToast(`Asset #${editingAsset.id} updated successfully.`);
+    try {
+      if (editingAsset) {
+        const response = await assetsAPI.update(editingAsset.id, formData);
+        if (response.data && response.data.success) {
+          showToast(`Asset #${editingAsset.id} updated successfully.`);
+        }
+      } else {
+        const response = await assetsAPI.create(formData);
+        if (response.data && response.data.success) {
+          showToast('New military asset created successfully.');
+        }
       }
-    } else {
-      const response = await assetsAPI.create(formData);
-      if (response.data && response.data.success) {
-        showToast('New military asset created successfully.');
+      try {
+        await loadAssets();
+      } catch (refreshErr) {
+        setError('Asset operation completed, but the asset list could not be refreshed.');
       }
+    } catch (mutationErr) {
+      console.error('Form submit error:', mutationErr);
+      throw mutationErr;
     }
-    loadAssets();
   };
 
   // View Details Handler
@@ -164,10 +173,19 @@ export default function Assets() {
       const response = await assetsAPI.delete(id);
       if (response.data && response.data.success) {
         showToast(`Asset #${id} deleted successfully.`);
-        loadAssets();
+        try {
+          await loadAssets();
+        } catch (refreshErr) {
+          setError('Asset was deleted, but the asset list could not be refreshed.');
+        }
+      } else {
+        alert(response.data?.message || 'Failed to delete asset.');
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete asset. Operation rejected by backend authorization.');
+      console.error('Delete error:', err);
+      const msg = err.response?.data?.message || 'Failed to delete asset.';
+      alert(msg);
+      throw err;
     }
   };
 
