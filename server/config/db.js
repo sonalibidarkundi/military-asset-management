@@ -85,9 +85,18 @@ function handleFallbackQuery(text, params = []) {
     return { rows: [] };
   }
 
-  // Aggregate summary queries (SUM, COUNT, COALESCE)
-  if (queryStr.includes('coalesce(sum(') || (queryStr.includes('count(') && !queryStr.includes('from users') && !queryStr.includes('from bases'))) {
-    return { rows: [{ total: 0, count: fallbackState.assets.length, sum: 0 }] };
+  // Dynamic Aggregate summary queries (SUM, COUNT, COALESCE)
+  if (queryStr.includes('coalesce(sum(') || queryStr.includes('sum(') || (queryStr.includes('count(') && !queryStr.includes('from users') && !queryStr.includes('from bases'))) {
+    let targetList = fallbackState.assets;
+    if (queryStr.includes('from purchases')) targetList = fallbackState.purchases;
+    else if (queryStr.includes('from transfers')) targetList = fallbackState.transfers;
+    else if (queryStr.includes('from assignments')) targetList = fallbackState.assignments;
+    else if (queryStr.includes('from expenditures')) targetList = fallbackState.expenditures;
+    else if (queryStr.includes('from bases')) targetList = fallbackState.bases;
+    else if (queryStr.includes('from users')) targetList = fallbackState.users;
+
+    const totalSum = targetList.reduce((acc, curr) => acc + (parseInt(curr.quantity, 10) || 1), 0);
+    return { rows: [{ total: totalSum, count: targetList.length, sum: totalSum }] };
   }
 
   // 1. Users lookup by email
