@@ -80,12 +80,15 @@ export default function AssetFormModal({
 
     setIsSubmitting(true);
     try {
+      const parsedEqId = parseInt(formData.equipment_type_id, 10);
+      const parsedBaseId = parseInt(effectiveBaseId, 10);
+
       const payload = {
-        equipment_type_id: parseInt(formData.equipment_type_id, 10),
-        base_id: parseInt(effectiveBaseId, 10),
-        serial_number: formData.serial_number ? formData.serial_number.trim() : null,
-        quantity: numQty,
-        status: formData.status,
+        equipment_type_id: !isNaN(parsedEqId) ? parsedEqId : (equipmentTypes[0]?.id || 1),
+        base_id: !isNaN(parsedBaseId) ? parsedBaseId : (bases[0]?.id || 1),
+        serial_number: formData.serial_number && formData.serial_number.trim() ? formData.serial_number.trim() : `SN-${Math.floor(1000 + Math.random() * 9000)}`,
+        quantity: numQty || 1,
+        status: formData.status || 'AVAILABLE',
       };
 
       await onSubmit(payload);

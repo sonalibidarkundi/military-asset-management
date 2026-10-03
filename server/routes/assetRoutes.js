@@ -17,6 +17,6 @@ router.get('/', getAssets);
 router.get('/:id', getAssetById);
 router.post('/', authorizeRoles('admin', 'logistics_officer', 'base_commander'), createAsset);
 router.put('/:id', authorizeRoles('admin', 'logistics_officer', 'base_commander'), updateAsset);
-router.delete('/:id', authorizeRoles('admin'), deleteAsset);
+router.delete('/:id', authorizeRoles('admin', 'logistics_officer', 'base_commander'), deleteAsset);
 
 export default router;

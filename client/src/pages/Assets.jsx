@@ -388,15 +388,13 @@ export default function Assets() {
                             <Edit2 size={15} />
                           </button>
 
-                          {isAdmin && (
-                            <button
-                              className="action-btn action-btn-delete"
-                              onClick={() => handleOpenDeleteModal(asset)}
-                              title="Delete Asset"
-                            >
-                              <Trash2 size={15} />
-                            </button>
-                          )}
+                          <button
+                            className="action-btn action-btn-delete"
+                            onClick={() => handleOpenDeleteModal(asset)}
+                            title="Delete Asset"
+                          >
+                            <Trash2 size={15} />
+                          </button>
                         </div>
                       </td>
                     </tr>
