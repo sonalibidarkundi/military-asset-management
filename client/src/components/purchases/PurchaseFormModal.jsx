@@ -31,8 +31,8 @@ export default function PurchaseFormModal({
       const randomSeq = Math.floor(100 + Math.random() * 900);
       setFormData({
         purchase_date: getTodayDate(),
-        base_id: isBaseCommander && userBaseId ? String(userBaseId) : '',
-        equipment_type_id: '',
+        base_id: isBaseCommander && userBaseId ? String(userBaseId) : (bases.length > 0 ? String(bases[0].id) : '1'),
+        equipment_type_id: equipmentTypes.length > 0 ? String(equipmentTypes[0].id) : '1',
         quantity: 1,
         supplier: '',
         reference_number: `PO-2026-${randomSeq}`,
@@ -40,7 +40,7 @@ export default function PurchaseFormModal({
       });
       setErrors('');
     }
-  }, [isOpen, isBaseCommander, userBaseId]);
+  }, [isOpen, isBaseCommander, userBaseId, bases, equipmentTypes]);
 
   if (!isOpen) return null;
 

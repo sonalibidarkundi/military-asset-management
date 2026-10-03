@@ -27,23 +27,23 @@ export default function AssetFormModal({
   useEffect(() => {
     if (initialData) {
       setFormData({
-        equipment_type_id: initialData.equipment_type_id || '',
-        base_id: initialData.base_id || (isBaseCommander ? String(userBaseId) : ''),
+        equipment_type_id: initialData.equipment_type_id ? String(initialData.equipment_type_id) : (equipmentTypes.length > 0 ? String(equipmentTypes[0].id) : '1'),
+        base_id: initialData.base_id ? String(initialData.base_id) : (isBaseCommander && userBaseId ? String(userBaseId) : (bases.length > 0 ? String(bases[0].id) : '1')),
         serial_number: initialData.serial_number || '',
         quantity: initialData.quantity || 1,
         status: initialData.status || 'AVAILABLE',
       });
     } else {
       setFormData({
-        equipment_type_id: '',
-        base_id: isBaseCommander && userBaseId ? String(userBaseId) : '',
+        equipment_type_id: equipmentTypes.length > 0 ? String(equipmentTypes[0].id) : '1',
+        base_id: isBaseCommander && userBaseId ? String(userBaseId) : (bases.length > 0 ? String(bases[0].id) : '1'),
         serial_number: '',
         quantity: 1,
         status: 'AVAILABLE',
       });
     }
     setErrors('');
-  }, [initialData, isOpen, isBaseCommander, userBaseId]);
+  }, [initialData, isOpen, isBaseCommander, userBaseId, equipmentTypes, bases]);
 
   if (!isOpen) return null;
 
