@@ -60,10 +60,10 @@ const fallbackState = {
     { id: 3, name: 'Logistics Officer', email: 'logistics@aegis.local', password_hash: DEFAULT_HASH, role: 'logistics_officer', base_id: 1, base_name: 'Command HQ' },
   ],
   assets: [
-    { id: 1, serial_number: 'ARM-9021', quantity: 12, status: 'Operational', base_id: 1, base_name: 'Command HQ', base_code: 'HQ-01', equipment_type_id: 1, equipment_name: 'M1A2 Abrams Tank', category: 'Heavy Armor', unit: 'Units', created_at: new Date().toISOString() },
-    { id: 2, serial_number: 'VEH-4410', quantity: 24, status: 'Operational', base_id: 1, base_name: 'Command HQ', base_code: 'HQ-01', equipment_type_id: 2, equipment_name: 'HMMWV Tactical Support', category: 'Light Vehicle', unit: 'Units', created_at: new Date().toISOString() },
-    { id: 3, serial_number: 'COM-8812', quantity: 15, status: 'In Maintenance', base_id: 2, base_name: 'Naval Base 02', base_code: 'NB-02', equipment_type_id: 3, equipment_name: 'SATCOM Transceiver Terminal', category: 'Communications', unit: 'Sets', created_at: new Date().toISOString() },
-    { id: 4, serial_number: 'ARM-5542', quantity: 150, status: 'Operational', base_id: 1, base_name: 'Command HQ', base_code: 'HQ-01', equipment_type_id: 4, equipment_name: '5.56mm Tactical Rifle', category: 'Small Arms', unit: 'Crates', created_at: new Date().toISOString() },
+    { id: 1, serial_number: 'ARM-9021', quantity: 12, status: 'OPERATIONAL', base_id: 1, base_name: 'Command HQ', base_code: 'HQ-01', equipment_type_id: 1, equipment_name: 'M1A2 Abrams Tank', category: 'Heavy Armor', unit: 'Units', created_at: new Date().toISOString() },
+    { id: 2, serial_number: 'VEH-4410', quantity: 24, status: 'OPERATIONAL', base_id: 1, base_name: 'Command HQ', base_code: 'HQ-01', equipment_type_id: 2, equipment_name: 'HMMWV Tactical Support', category: 'Light Vehicle', unit: 'Units', created_at: new Date().toISOString() },
+    { id: 3, serial_number: 'COM-8812', quantity: 15, status: 'IN_TRANSIT', base_id: 2, base_name: 'Naval Base 02', base_code: 'NB-02', equipment_type_id: 3, equipment_name: 'SATCOM Transceiver Terminal', category: 'Communications', unit: 'Sets', created_at: new Date().toISOString() },
+    { id: 4, serial_number: 'ARM-5542', quantity: 150, status: 'OPERATIONAL', base_id: 1, base_name: 'Command HQ', base_code: 'HQ-01', equipment_type_id: 4, equipment_name: '5.56mm Tactical Rifle', category: 'Small Arms', unit: 'Crates', created_at: new Date().toISOString() },
   ],
   purchases: [
     { id: 1, purchase_date: '2026-03-15', base_id: 1, base_name: 'Command HQ', equipment_type_id: 1, equipment_name: 'M1A2 Abrams Tank', category: 'Heavy Armor', quantity: 4, supplier: 'General Dynamics', reference_number: 'PO-2026-101', notes: 'Quarterly procurement' },
@@ -79,6 +79,11 @@ const fallbackState = {
 // Resilient query resolver
 function handleFallbackQuery(text, params = []) {
   const queryStr = text.trim().toLowerCase();
+
+  // Handle transactions BEGIN / COMMIT / ROLLBACK
+  if (queryStr === 'begin' || queryStr === 'commit' || queryStr === 'rollback') {
+    return { rows: [] };
+  }
 
   // Aggregate summary queries (SUM, COUNT, COALESCE)
   if (queryStr.includes('coalesce(sum(') || (queryStr.includes('count(') && !queryStr.includes('from users') && !queryStr.includes('from bases'))) {
@@ -132,15 +137,26 @@ function handleFallbackQuery(text, params = []) {
     return { rows: fallbackState.bases };
   }
 
-  // 6. Assets list / insert / count
+  // 6. Assets operations: Delete / Update / Select / Insert
   if (queryStr.includes('from assets') || queryStr.includes('assets')) {
+    // Delete Asset
+    if (queryStr.includes('delete from assets')) {
+      const targetId = parseInt(params[0], 10);
+      const index = fallbackState.assets.findIndex((a) => a.id === targetId);
+      if (index !== -1) {
+        fallbackState.assets.splice(index, 1);
+      }
+      return { rows: [] };
+    }
+
+    // Insert Asset
     if (queryStr.includes('insert into assets')) {
-      const [serial_number, equipment_type_id, base_id, quantity, status] = params;
-      const eq = fallbackState.equipment_types.find(e => e.id === parseInt(equipment_type_id, 10)) || fallbackState.equipment_types[0];
-      const b = fallbackState.bases.find(base => base.id === parseInt(base_id, 10)) || fallbackState.bases[0];
+      const [equipment_type_id, base_id, serial_number, quantity, status] = params;
+      const eq = fallbackState.equipment_types.find((e) => e.id === parseInt(equipment_type_id, 10)) || fallbackState.equipment_types[0];
+      const b = fallbackState.bases.find((base) => base.id === parseInt(base_id, 10)) || fallbackState.bases[0];
       const newAsset = {
-        id: fallbackState.assets.length + 1,
-        serial_number,
+        id: fallbackState.assets.length > 0 ? Math.max(...fallbackState.assets.map((a) => a.id)) + 1 : 1,
+        serial_number: serial_number || `SN-${Math.floor(1000 + Math.random() * 9000)}`,
         equipment_type_id: eq.id,
         equipment_name: eq.name,
         category: eq.category,
@@ -149,12 +165,34 @@ function handleFallbackQuery(text, params = []) {
         base_name: b.name,
         base_code: b.code,
         quantity: parseInt(quantity, 10) || 1,
-        status: status || 'Operational',
+        status: status ? status.toUpperCase() : 'AVAILABLE',
         created_at: new Date().toISOString(),
       };
       fallbackState.assets.push(newAsset);
       return { rows: [newAsset] };
     }
+
+    // Update Asset
+    if (queryStr.includes('update assets')) {
+      const targetId = parseInt(params[params.length - 1], 10);
+      const asset = fallbackState.assets.find((a) => a.id === targetId);
+      if (asset) {
+        if (params[0]) asset.equipment_type_id = parseInt(params[0], 10);
+        if (params[1]) asset.base_id = parseInt(params[1], 10);
+        if (params[2] !== undefined) asset.serial_number = params[2];
+        if (params[3] !== undefined) asset.quantity = parseInt(params[3], 10);
+        if (params[4]) asset.status = params[4];
+      }
+      return { rows: asset ? [asset] : [] };
+    }
+
+    // Select single asset by ID
+    if (queryStr.includes('where a.id = $1') || queryStr.includes('where id = $1')) {
+      const targetId = parseInt(params[0], 10);
+      const asset = fallbackState.assets.find((a) => a.id === targetId);
+      return { rows: asset ? [asset] : [] };
+    }
+
     return { rows: fallbackState.assets };
   }
 
@@ -162,8 +200,8 @@ function handleFallbackQuery(text, params = []) {
   if (queryStr.includes('purchases')) {
     if (queryStr.includes('insert into purchases')) {
       const [purchase_date, base_id, equipment_type_id, quantity, supplier, reference_number, notes] = params;
-      const eq = fallbackState.equipment_types.find(e => e.id === parseInt(equipment_type_id, 10)) || fallbackState.equipment_types[0];
-      const b = fallbackState.bases.find(base => base.id === parseInt(base_id, 10)) || fallbackState.bases[0];
+      const eq = fallbackState.equipment_types.find((e) => e.id === parseInt(equipment_type_id, 10)) || fallbackState.equipment_types[0];
+      const b = fallbackState.bases.find((base) => base.id === parseInt(base_id, 10)) || fallbackState.bases[0];
       const newP = {
         id: fallbackState.purchases.length + 1,
         purchase_date,
@@ -187,9 +225,9 @@ function handleFallbackQuery(text, params = []) {
   if (queryStr.includes('transfers')) {
     if (queryStr.includes('insert into transfers')) {
       const [transfer_date, from_base_id, to_base_id, equipment_type_id, quantity, reference_number, notes, status] = params;
-      const eq = fallbackState.equipment_types.find(e => e.id === parseInt(equipment_type_id, 10)) || fallbackState.equipment_types[0];
-      const fb = fallbackState.bases.find(base => base.id === parseInt(from_base_id, 10)) || fallbackState.bases[0];
-      const tb = fallbackState.bases.find(base => base.id === parseInt(to_base_id, 10)) || fallbackState.bases[1];
+      const eq = fallbackState.equipment_types.find((e) => e.id === parseInt(equipment_type_id, 10)) || fallbackState.equipment_types[0];
+      const fb = fallbackState.bases.find((base) => base.id === parseInt(from_base_id, 10)) || fallbackState.bases[0];
+      const tb = fallbackState.bases.find((base) => base.id === parseInt(to_base_id, 10)) || fallbackState.bases[1];
       const newT = {
         id: fallbackState.transfers.length + 1,
         transfer_date,
@@ -231,6 +269,30 @@ function handleFallbackQuery(text, params = []) {
   // Default empty rows
   return { rows: [] };
 }
+
+// Resilient fallback client for transaction operations (pool.connect)
+const mockClient = {
+  query: async (text, params = []) => {
+    return handleFallbackQuery(text, params);
+  },
+  release: () => {},
+};
+
+// Override pool.connect to return fallback client on connection failure
+const originalPoolConnect = pool.connect.bind(pool);
+pool.connect = async function (callback) {
+  if (isPlaceholderUrl) {
+    if (callback) callback(null, mockClient, () => {});
+    return mockClient;
+  }
+  try {
+    return await originalPoolConnect();
+  } catch (err) {
+    console.warn(`⚠️ PostgreSQL pool.connect notice (${err.message}). Using resilient demo fallback client.`);
+    if (callback) callback(null, mockClient, () => {});
+    return mockClient;
+  }
+};
 
 export const query = async (text, params = []) => {
   if (isPlaceholderUrl) {
