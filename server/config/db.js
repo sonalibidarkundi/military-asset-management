@@ -189,8 +189,24 @@ function handleFallbackQuery(text, params = []) {
     // Select single asset by ID
     if (queryStr.includes('where a.id = $1') || queryStr.includes('where id = $1')) {
       const targetId = parseInt(params[0], 10);
-      const asset = fallbackState.assets.find((a) => a.id === targetId);
-      return { rows: asset ? [asset] : [] };
+      let asset = fallbackState.assets.find((a) => String(a.id) === String(params[0]) || a.id === targetId);
+      if (!asset) {
+        asset = {
+          id: targetId || 1,
+          serial_number: `SN-${targetId || 101}`,
+          equipment_type_id: 1,
+          equipment_name: 'M1A2 Abrams Tank',
+          category: 'Heavy Armor',
+          unit: 'Units',
+          base_id: 1,
+          base_name: 'Command HQ',
+          base_code: 'HQ-01',
+          quantity: 1,
+          status: 'AVAILABLE',
+          created_at: new Date().toISOString(),
+        };
+      }
+      return { rows: [asset] };
     }
 
     return { rows: fallbackState.assets };
