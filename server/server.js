@@ -44,23 +44,23 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Health Check Endpoint
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     success: true,
     message: 'AEGIS MAMS API is running',
   });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/assets', assetRoutes);
-app.use('/api/purchases', purchaseRoutes);
-app.use('/api/transfers', transferRoutes);
-app.use('/api/assignments', assignmentRoutes);
-app.use('/api/expenditures', expenditureRoutes);
-app.use('/api/audit', auditRoutes);
-app.use('/api/reports', reportRoutes);
+// API Routes (mounted both with and without /api prefix for Vercel serverless rewrite compatibility)
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/dashboard', '/dashboard'], dashboardRoutes);
+app.use(['/api/assets', '/assets'], assetRoutes);
+app.use(['/api/purchases', '/purchases'], purchaseRoutes);
+app.use(['/api/transfers', '/transfers'], transferRoutes);
+app.use(['/api/assignments', '/assignments'], assignmentRoutes);
+app.use(['/api/expenditures', '/expenditures'], expenditureRoutes);
+app.use(['/api/audit', '/audit'], auditRoutes);
+app.use(['/api/reports', '/reports'], reportRoutes);
 
 // Error Handling Middleware
 app.use(notFoundHandler);

@@ -82,10 +82,15 @@ export const AuthProvider = ({ children }) => {
         message: response.data?.message || 'Invalid email or password.',
       };
     } catch (error) {
-      const message =
+      let message =
         error.response?.data?.message ||
-        error.message ||
-        'Unable to connect to the authentication server.';
+        error.message;
+      
+      if (error.code === 'ERR_NETWORK' || message === 'Network Error') {
+        message = 'Network Error: Backend server is unreachable or offline. Please verify database connection and server status.';
+      } else if (!message) {
+        message = 'Unable to connect to the authentication server.';
+      }
       
       clearSession();
       return { success: false, message };

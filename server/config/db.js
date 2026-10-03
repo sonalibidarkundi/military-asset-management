@@ -11,14 +11,19 @@ if (!connectionString) {
   console.error('CRITICAL ERROR: DATABASE_URL environment variable is missing.');
 }
 
-const isCloudDb = process.env.DATABASE_URL && (process.env.DATABASE_URL.includes('render.com') || process.env.DATABASE_URL.includes('supabase') || process.env.DATABASE_URL.includes('neon.tech') || process.env.NODE_ENV === 'production' || process.env.VERCEL);
+const isCloudDb =
+  process.env.DATABASE_URL &&
+  !process.env.DATABASE_URL.includes('localhost') &&
+  !process.env.DATABASE_URL.includes('127.0.0.1');
 
 export const pool = new Pool({
   connectionString: connectionString || 'postgresql://postgres:postgres@localhost:5432/aegis_mams',
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
-  ...(isCloudDb ? { ssl: { rejectUnauthorized: false } } : {}),
+  ...(isCloudDb || process.env.VERCEL || process.env.NODE_ENV === 'production'
+    ? { ssl: { rejectUnauthorized: false } }
+    : {}),
 });
 
 pool.on('connect', () => {

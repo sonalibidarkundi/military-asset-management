@@ -219,7 +219,7 @@ export const loginUser = async (req, res, next) => {
       entityType: 'AUTH',
       entityId: user.id,
       details: { email: user.email, role: user.role },
-      ipAddress: req.ip || req.connection.remoteAddress,
+      ipAddress: req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || null,
     });
 
     res.json({
